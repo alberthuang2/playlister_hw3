@@ -9,6 +9,15 @@ export const GlobalStoreContext = createContext({});
     @author McKilla Gorilla
 */
 
+// state of current modal
+export const CurrentModal = {
+    NONE : "NONE",
+    DELETE_LIST : "DELETE_LIST",
+    EDIT_SONG : "EDIT_SONG",
+    REMOVE_SONG : "REMOVE_SONG"
+}
+
+
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR GLOBAL
 // DATA STORE STATE THAT CAN BE PROCESSED
 export const GlobalStoreActionType = {
@@ -31,7 +40,8 @@ export const useGlobalStore = () => {
         idNamePairs: [],
         currentList: null,
         newListCounter: 0,
-        listNameActive: false
+        listNameActive: false,
+        currentModal: CurrentModal.NONE
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -45,7 +55,9 @@ export const useGlobalStore = () => {
                     idNamePairs: payload.idNamePairs,
                     currentList: payload.playlist,
                     newListCounter: store.newListCounter,
-                    listNameActive: false
+                    listNameActive: false,
+                    currentModal: CurrentModal.NONE,
+                    listKeyPairMarkedForDeletion : null
                 });
             }
             // STOP EDITING THE CURRENT LIST
@@ -54,7 +66,9 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: null,
                     newListCounter: store.newListCounter,
-                    listNameActive: false
+                    listNameActive: false,
+                    currentModal: CurrentModal.NONE,
+                    listKeyPairMarkedForDeletion : null
                 })
             }
             // CREATE A NEW LIST
@@ -63,7 +77,9 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
                     newListCounter: store.newListCounter + 1,
-                    listNameActive: false
+                    listNameActive: false,
+                    currentModal: CurrentModal.NONE,
+                    listKeyPairMarkedForDeletion : null
                 })
             }
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
@@ -72,7 +88,9 @@ export const useGlobalStore = () => {
                     idNamePairs: payload,
                     currentList: null,
                     newListCounter: store.newListCounter,
-                    listNameActive: false
+                    listNameActive: false,
+                    currentModal: CurrentModal.NONE,
+                    listKeyPairMarkedForDeletion : null
                 });
             }
             // PREPARE TO DELETE A LIST
@@ -81,7 +99,9 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: null,
                     newListCounter: store.newListCounter,
-                    listNameActive: false
+                    listNameActive: false,
+                    currentModal: CurrentModal.DELETE_LIST,
+                    listKeyPairMarkedForDeletion : payload
                 });
             }
             // UPDATE A LIST
@@ -90,7 +110,9 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
                     newListCounter: store.newListCounter,
-                    listNameActive: false
+                    listNameActive: false,
+                    currentModal: CurrentModal.NONE,
+                    listKeyPairMarkedForDeletion : null
                 });
             }
             // START EDITING A LIST NAME
@@ -99,7 +121,9 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
                     newListCounter: store.newListCounter,
-                    listNameActive: true
+                    listNameActive: true,
+                    currentModal: CurrentModal.NONE,
+                    listKeyPairMarkedForDeletion : null
                 });
             }
             default:
@@ -116,9 +140,11 @@ export const useGlobalStore = () => {
         async function asyncChangeListName(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
-                let playlist = response.data.playist;
+                console.log(response);
+                let playlist = response.data.playlist;
                 playlist.name = newName;
                 async function updateList(playlist) {
+                    console.log(playlist)
                     response = await api.updatePlaylistById(playlist._id, playlist);
                     if (response.data.success) {
                         async function getListPairs(playlist) {
@@ -185,6 +211,58 @@ export const useGlobalStore = () => {
             }
         }
         asyncSetCurrentList(id);
+    }
+    store.markDeleteList = function (id) {
+        async function asyncMarkDeleteList(id) {
+            let response = await api.getPlaylistById(id);
+            console.log(response);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+
+                if (response.data.success) {
+                    storeReducer({
+                        type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
+                        payload: playlist
+                    });
+                }
+            }
+        }
+        asyncMarkDeleteList(id);
+    }
+
+    store.deleteMarkedList = function(){
+        async function asyncDeleteMarkedList() {
+            let response = await api.deletePlaylistById(store.listKeyPairMarkedForDeletion._id);
+            if (response.data.success) {
+                console.log("success");
+
+                if (response.data.success) {
+                    storeReducer({
+                        type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
+                        payload: null
+                    });
+                }
+            }
+        }
+        asyncDeleteMarkedList();
+    }
+
+    store.createNewList = function(){
+         async function asyncCreateNewList() {
+            let response = await api.createPlaylist();
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+
+                if (response.data.success) {
+                    storeReducer({
+                        type: GlobalStoreActionType.CREATE_NEW_LIST,
+                        payload: playlist
+                    });
+                    store.setCurrentList(playlist._id)
+                }
+            }
+        }
+        asyncCreateNewList();
     }
     store.getPlaylistSize = function() {
         return store.currentList.songs.length;
