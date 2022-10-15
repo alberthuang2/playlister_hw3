@@ -87,9 +87,36 @@ getPlaylistPairs = async (req, res) => {
     }).catch(err => console.log(err))
 }
 
+deletePlaylistById = async (req, res) => {
+    await Playlist.find({}, (err, playlists) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err})
+        }
+        if (!playlists.length) {
+            return res
+                .status(404)
+                .json({ success: false, error: 'Playlists not found'})
+        }
+        else {
+            // PUT ALL THE LISTS INTO ID, NAME PAIRS
+            let pairs = [];
+            for (let key in playlists) {
+                let list = playlists[key];
+                let pair = {
+                    _id : list._id,
+                    name : list.name
+                };
+                pairs.push(pair);
+            }
+            return res.status(200).json({ success: true, idNamePairs: pairs })
+        }
+    }).catch(err => console.log(err))
+}
+
 module.exports = {
     createPlaylist,
     getPlaylists,
     getPlaylistPairs,
-    getPlaylistById
+    getPlaylistById,
+    deletePlaylistById
 }
