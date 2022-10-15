@@ -27,6 +27,7 @@ export const GlobalStoreActionType = {
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
+    REMOVE_MODAL: "REMOVE_MODAL"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -126,6 +127,17 @@ export const useGlobalStore = () => {
                     listKeyPairMarkedForDeletion : null
                 });
             }
+            // REMOVE MODAL
+            case GlobalStoreActionType.REMOVE_MODAL: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: payload,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
+                    currentModal: CurrentModal.NONE,
+                    listKeyPairMarkedForDeletion : null
+                });
+            }
             default:
                 return store;
         }
@@ -214,6 +226,7 @@ export const useGlobalStore = () => {
     }
     store.markDeleteList = function (id) {
         async function asyncMarkDeleteList(id) {
+            console.log(id)
             let response = await api.getPlaylistById(id);
             console.log(response);
             if (response.data.success) {
@@ -235,12 +248,14 @@ export const useGlobalStore = () => {
             let response = await api.deletePlaylistById(store.listKeyPairMarkedForDeletion._id);
             if (response.data.success) {
                 console.log("success");
+                    store.removeModal(null);
 
                 if (response.data.success) {
                     storeReducer({
                         type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
                         payload: null
                     });
+                    store.loadIdNamePairs();
                 }
             }
         }
@@ -264,6 +279,25 @@ export const useGlobalStore = () => {
         }
         asyncCreateNewList();
     }
+
+    store.removeModal = function(id){
+       async function asyncRemoveModal(id) {
+        let pl = null;
+            if(id!==null){
+            let response = await api.getPlaylistById(id);
+            console.log(response);
+            if (response.data.success) {
+                pl = response.data.playlist;
+            }
+        }
+            storeReducer({
+                type: GlobalStoreActionType.REMOVE_MODAL,
+                payload: pl
+            });
+        }
+        asyncRemoveModal(id);
+    }
+
     store.getPlaylistSize = function() {
         return store.currentList.songs.length;
     }

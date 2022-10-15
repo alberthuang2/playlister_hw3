@@ -19,13 +19,16 @@ const DeleteListModal = () => {
         store.deleteMarkedList();
     }
     function handleCancelDeleteList() {
-        store.deleteMarkedList();
+        store.removeModal(null);
     }
 
     let name = "";
     let modalClass = "modal";
     if(store.currentModal === "DELETE_LIST")
-        modalClass +=" is-visible"
+        modalClass +=" is-visible";
+    else
+        modalClass = "modal";
+    console.log(modalClass);
     if (store) {
         if(store.listKeyPairMarkedForDeletion)
         name = store.listKeyPairMarkedForDeletion.name;
