@@ -11,9 +11,9 @@ const DeleteListModal = () => {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
 
-    useEffect(() => {
-        store.loadIdNamePairs();
-    }, []);
+    // useEffect(() => {
+    //     store.loadIdNamePairs();
+    // }, []);
 
     function handleConfirmDeleteList() {
         store.deleteMarkedList();

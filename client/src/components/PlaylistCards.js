@@ -1,6 +1,8 @@
 import { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import SongCard from './SongCard.js'
+import DeleteSongModal from './DeleteSongModal.js'
+import DeleteListModal from './DeleteListModal.js'
 import { GlobalStoreContext } from '../store'
 /*
     This React component lets us edit a loaded list, which only
@@ -12,10 +14,9 @@ function PlaylistCards() {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
 
-    return (
-        <div id="playlist-cards">
-        {
-            store.currentList.songs.map((song, index) => (
+    let playlistCards = "";
+    if (store) {
+        playlistCards = store.currentList.songs.map((song, index) => (
                 <SongCard
                     id={'playlist-song-' + (index)}
                     key={'playlist-song-' + (index)}
@@ -23,7 +24,16 @@ function PlaylistCards() {
                     song={song}
                 />
             ))
+    }
+    return (
+        <div>
+        <div id="playlist-cards">
+        {
+            playlistCards
         }
+        <DeleteSongModal></DeleteSongModal>
+        </div> 
+               
         </div>
     )
 }
