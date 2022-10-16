@@ -109,6 +109,7 @@ await Playlist.findOne({ _id: req.params.id }, (err, playlist) => {
             return res.status(400).json({ success: false, error: err })
         }
         playlist.name = req.body.name;
+        playlist.songs = req.body.songs;
   playlist
         .save()
         .then(() => {

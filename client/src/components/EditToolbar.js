@@ -23,6 +23,12 @@ function EditToolbar() {
         history.push("/");
         store.closeCurrentList();
     }
+    function handleAddSong() {
+        let id = store.currentList._id;
+        let songs = store.currentList.songs;
+        songs.push({title: "untitled", artist:"untitled", youTubeId: "dQw4w9WgXcQ"})
+        store.updateSongs(id, songs);
+    }
     let editStatus = false;
     if (store.isListNameEditActive) {
         editStatus = true;
@@ -35,6 +41,7 @@ function EditToolbar() {
                 disabled={editStatus}
                 value="+"
                 className={enabledButtonClass}
+                onClick = {handleAddSong}
             />
             <input
                 type="button"

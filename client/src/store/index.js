@@ -183,6 +183,42 @@ export const useGlobalStore = () => {
         asyncChangeListName(id);
     }
 
+    store.updateSongs = function (id, newSongs) {
+        // GET THE LIST
+        async function asyncUpdateSongs(id) {
+            let response = await api.getPlaylistById(id);
+            if (response.data.success) {
+                console.log(response);
+                let playlist = response.data.playlist;
+                playlist.songs = newSongs;
+                async function updateList(playlist) {
+                    console.log(playlist)
+                    response = await api.updatePlaylistById(playlist._id, playlist);
+                    console.log(response);
+                    if (response.data.success) {
+                        async function getListPairs(playlist) {
+                            response = await api.getPlaylistPairs();
+                            console.log(response)
+                            if (response.data.success) {
+                                let pairsArray = response.data.idNamePairs;
+                                storeReducer({
+                                    type: GlobalStoreActionType.CHANGE_LIST_NAME,
+                                    payload: {
+                                        idNamePairs: pairsArray,
+                                        playlist: playlist
+                                    }
+                                });
+                            }
+                        }
+                        getListPairs(playlist);
+                    }
+                }
+                updateList(playlist);
+            }
+        }
+        asyncUpdateSongs(id);
+    }
+
     // THIS FUNCTION PROCESSES CLOSING THE CURRENTLY LOADED LIST
     store.closeCurrentList = function () {
         storeReducer({
