@@ -44,26 +44,27 @@ function SongCard(props) {
         event.preventDefault();
         let end = index; //
         let start = Number(event.dataTransfer.getData("song")); //
-        let songs = store.currentList.songs;
+        //let songs = store.currentList.songs;
         store.updateDrag(false, false)
 
-        let list = store.currentList
-        // WE NEED TO UPDATE THE STATE FOR THE APP
-        if (start < end) {
-            let temp = list.songs[start];
-            for (let i = start; i < end; i++) {
-                list.songs[i] = list.songs[i + 1];
-            }
-            list.songs[end] = temp;
-        }
-        else if (start > end) {
-            let temp = list.songs[start];
-            for (let i = start; i > end; i--) {
-                list.songs[i] = list.songs[i - 1];
-            }
-            list.songs[end] = temp;
-        }
-        store.updateSongs(store.currentList._id, songs)
+        // let list = store.currentList
+        // // WE NEED TO UPDATE THE STATE FOR THE APP
+        // if (start < end) {
+        //     let temp = list.songs[start];
+        //     for (let i = start; i < end; i++) {
+        //         list.songs[i] = list.songs[i + 1];
+        //     }
+        //     list.songs[end] = temp;
+        // }
+        // else if (start > end) {
+        //     let temp = list.songs[start];
+        //     for (let i = start; i > end; i--) {
+        //         list.songs[i] = list.songs[i - 1];
+        //     }
+        //     list.songs[end] = temp;
+        // }
+        // store.updateSongs(store.currentList._id, songs)
+        store.dragTransaction(start,end)
         // this.setState(prevState => ({
         //     isDragging: false,
         //     draggedTo: false
@@ -74,7 +75,6 @@ function SongCard(props) {
     }
 
     function handleDelete() {
-        console.log(index);
         store.markDeleteSong(index);
     }
 

@@ -28,7 +28,6 @@ const DeleteListModal = () => {
         modalClass +=" is-visible";
     else
         modalClass = "modal";
-    console.log(modalClass);
     if (store) {
         if(store.listKeyPairMarkedForDeletion)
         name = store.listKeyPairMarkedForDeletion.name;

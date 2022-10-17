@@ -12,12 +12,13 @@ const EditSongModal = () => {
     store.history = useHistory();
     
     function handleConfirmEditSong() {
-        let newSongs = store.currentList.songs;
-        let newSong = newSongs[store.songEditIndex]
-        newSong.title = store.editTitle;
-        newSong.artist = store.editArtist
-        newSong.youTubeId = store.editYouTubeId
-        store.updateSongs(store.currentList._id, newSongs);
+        // let newSongs = store.currentList.songs;
+        // let newSong = newSongs[store.songEditIndex]
+        // newSong.title = store.editTitle;
+        // newSong.artist = store.editArtist
+        // newSong.youTubeId = store.editYouTubeId
+        // store.updateSongs(store.currentList._id, newSongs);
+        store.editSongTransaction(store.songEditIndex);
     }
     function handleCancelEditSong() {
         store.removeModal(null);
