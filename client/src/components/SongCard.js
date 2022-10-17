@@ -3,7 +3,6 @@ import { GlobalStoreContext } from '../store'
 
 function SongCard(props) {
     const { store } = useContext(GlobalStoreContext);
-
     const { song, index } = props;
     let cardClass = "list-card unselected-list-card";
     
@@ -12,11 +11,16 @@ function SongCard(props) {
         store.markDeleteSong(index);
     }
 
-    return (
-        <div
+    function handleDoubleClick(){
+        store.setSongNameActive(index);
+    }
+    
+    let songCard = 
+ <div
             key={index}
             id={'song-' + index + '-card'}
             className={cardClass}
+            onDoubleClick = {handleDoubleClick}
         >
             {index + 1}.
             <a
@@ -33,6 +37,8 @@ function SongCard(props) {
                 onClick ={handleDelete}
             />
         </div>
+    return (
+       songCard
     );
 }
 

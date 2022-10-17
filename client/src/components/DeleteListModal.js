@@ -19,7 +19,7 @@ const DeleteListModal = () => {
         store.deleteMarkedList();
     }
     function handleCancelDeleteList() {
-        store.removeModal(null);
+        store.removeModal();
     }
 
     let name = "";
