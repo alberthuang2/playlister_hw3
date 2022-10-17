@@ -6,6 +6,73 @@ function SongCard(props) {
     const { song, index } = props;
     let cardClass = "list-card unselected-list-card";
     
+    // drag and drop
+    function handleDragStart(event){
+        event.dataTransfer.setData("song", index);
+        store.updateDrag(true, store.draggedTo)
+        // this.setState(prevState => ({
+        //     isDragging: true,
+        //     draggedTo: prevState.draggedTo
+        // }));
+    }
+    function handleDragOver(event){
+        event.preventDefault();
+        store.updateDrag(store.isDragging, true)
+        // this.setState(prevState => ({
+        //     isDragging: prevState.isDragging,
+        //     draggedTo: true
+        // }));
+    }
+    function handleDragEnter(event){
+        event.preventDefault();
+        store.updateDrag(store.isDragging, true)
+        // this.setState(prevState => ({
+        //     isDragging: prevState.isDragging,
+        //     draggedTo: true
+        // }));
+    }
+    function handleDragLeave(event){
+        event.preventDefault();
+        store.updateDrag(store.isDragging, false)
+
+        // this.setState(prevState => ({
+        //     isDragging: prevState.isDragging,
+        //     draggedTo: false
+        // }));
+    }
+    function handleDrop(event){
+        event.preventDefault();
+        let end = index; //
+        let start = Number(event.dataTransfer.getData("song")); //
+        let songs = store.currentList.songs;
+        store.updateDrag(false, false)
+
+        let list = store.currentList
+        // WE NEED TO UPDATE THE STATE FOR THE APP
+        if (start < end) {
+            let temp = list.songs[start];
+            for (let i = start; i < end; i++) {
+                list.songs[i] = list.songs[i + 1];
+            }
+            list.songs[end] = temp;
+        }
+        else if (start > end) {
+            let temp = list.songs[start];
+            for (let i = start; i > end; i--) {
+                list.songs[i] = list.songs[i - 1];
+            }
+            list.songs[end] = temp;
+        }
+        store.updateSongs(store.currentList._id, songs)
+        // this.setState(prevState => ({
+        //     isDragging: false,
+        //     draggedTo: false
+        // }));
+
+        // ASK THE MODEL TO MOVE THE DATA
+        //this.props.moveCallback(sourceIndex, targetIndex);
+    }
+
     function handleDelete() {
         console.log(index);
         store.markDeleteSong(index);
@@ -15,12 +82,19 @@ function SongCard(props) {
         store.setSongNameActive(index);
     }
     
+    
     let songCard = 
  <div
             key={index}
             id={'song-' + index + '-card'}
             className={cardClass}
+            draggable = {true}
             onDoubleClick = {handleDoubleClick}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
         >
             {index + 1}.
             <a
