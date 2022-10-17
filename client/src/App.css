@@ -232,6 +232,24 @@ input {
   text-align:center;
 }
 
+.playlister-button,
+.playlister-button-disabled {
+  font-size: 36pt;
+  border-width: 0px;
+  float: left;
+  color: black;
+  cursor: pointer;
+}
+
+.playlister-button:hover {
+  cursor: pointer;
+  color: black;
+}
+
+.playlister-button-disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
 /* ANIMATIONS
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 [data-animation] .modal-dialog {

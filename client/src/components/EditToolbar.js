@@ -12,7 +12,28 @@ function EditToolbar() {
     const history = useHistory();
 
     let enabledButtonClass = "playlister-button";
-
+    let disabledButtonClass = "playlister-button-disabled";
+    let addClass = enabledButtonClass;
+    let redoClass = disabledButtonClass;
+    let undoClass = disabledButtonClass;
+    let exitClass = enabledButtonClass;
+    if(store.currentModal!=="NONE"){
+        addClass = disabledButtonClass;
+        redoClass = disabledButtonClass;
+        undoClass = disabledButtonClass;
+        exitClass = disabledButtonClass;
+    }
+    if(store.currentList===null){
+        addClass = disabledButtonClass;
+        exitClass = disabledButtonClass;
+    }
+    //store.updateTransactions();
+    let hasRedo = store.tps.hasTransactionToRedo();
+    let hasUndo = store.tps.hasTransactionToUndo();
+    if(hasRedo)
+        redoClass = enabledButtonClass
+    if(hasUndo)
+        undoClass = enabledButtonClass
     function handleUndo() {
         store.undo();
     }
@@ -41,7 +62,7 @@ function EditToolbar() {
                 id='add-song-button'
                 disabled={editStatus}
                 value="+"
-                className={enabledButtonClass}
+                className={addClass}
                 onClick = {handleAddSong}
             />
             <input
@@ -49,7 +70,7 @@ function EditToolbar() {
                 id='undo-button'
                 disabled={editStatus}
                 value="⟲"
-                className={enabledButtonClass}
+                className={undoClass}
                 onClick={handleUndo}
             />
             <input
@@ -57,7 +78,7 @@ function EditToolbar() {
                 id='redo-button'
                 disabled={editStatus}
                 value="⟳"
-                className={enabledButtonClass}
+                className={redoClass}
                 onClick={handleRedo}
             />
             <input
@@ -65,7 +86,7 @@ function EditToolbar() {
                 id='close-button'
                 disabled={editStatus}
                 value="&#x2715;"
-                className={enabledButtonClass}
+                className={exitClass}
                 onClick={handleClose}
             />
         </span>);
