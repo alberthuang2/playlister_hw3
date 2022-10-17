@@ -57,7 +57,8 @@ const EditSongModal = () => {
          <div
                 id="edit-song-modal"
                 className={modalClass}
-                data-animation="slideInOutLeft">
+                data-animation="slideInOutLeft"
+                >
                 <div
                     id='edit-song-root'
                     className="modal-root">
